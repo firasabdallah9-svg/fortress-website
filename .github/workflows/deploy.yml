@@ -44,5 +44,5 @@ jobs:
           # publishes to a Cloudflare preview environment with its own URL.
           command: >-
             pages deploy dist
-            --project-name=fortress
+            --project-name=fortress-website
             --branch=${{ github.head_ref || github.ref_name }}
