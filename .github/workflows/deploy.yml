@@ -35,6 +35,20 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Create the Pages project if it doesn't exist yet. Safe to keep: if the
+      # project already exists this step just errors and is ignored, and the
+      # deploy below proceeds. This guards against the project missing or having
+      # been created as a Worker rather than a Pages project.
+      - name: Ensure Pages project exists
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages project create fortress-website
+            --production-branch=main
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
@@ -46,3 +60,4 @@ jobs:
             pages deploy dist
             --project-name=fortress-website
             --branch=${{ github.head_ref || github.ref_name }}
+            --commit-dirty=true
